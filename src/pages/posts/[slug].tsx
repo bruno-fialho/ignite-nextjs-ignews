@@ -42,10 +42,16 @@ export default function Post({ post }: PostProps) {
 // using SSR because we need to control user access 
 export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
   const session = await getSession({ req });
-
-  // if (!session) {}
-
   const { slug } = params;
+
+  if (!session.activeSubscription) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
 
   const prismic = getPrismicClient(req);
 
